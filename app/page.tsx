@@ -178,7 +178,7 @@ export default function TraumLandingPage() {
               {"TRAUM".split("").map((char, i) => (
                 <span
                   key={i}
-                  className="inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter"
+                  className="inline-block text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black tracking-tighter"
                   style={{
                     color: colors.cream,
                     transform: isLoaded ? "translateY(0) rotate(0deg)" : "translateY(100%) rotate(5deg)",
@@ -200,17 +200,17 @@ export default function TraumLandingPage() {
                 transition: "all 0.6s ease-out 0.8s",
               }}
             >
-              <span style={{ color: `${colors.cream}70` }}>Donde el </span>
-              <span className="font-semibold" style={{ color: colors.sand }}>diseno</span>
-              <span style={{ color: `${colors.cream}70` }}> encuentra la </span>
-              <span className="font-semibold" style={{ color: colors.moss }}>cultura</span>
+              <span style={{ color: colors.cream }}>Donde el </span>
+              <span className="font-semibold" style={{ color: colors.sand }}>diseño</span>
+              <span style={{ color: colors.cream }}> encuentra la </span>
+              <span className="font-semibold" style={{ color: colors.sand }}>cultura</span>
             </div>
 
             {/* Tagline */}
             <p
               className="text-sm md:text-base max-w-md mx-auto lg:mx-0"
               style={{
-                color: `${colors.cream}50`,
+                color: `${colors.cream}CC`,
                 opacity: isLoaded ? 1 : 0,
                 transition: "opacity 0.6s ease-out 1s",
               }}
@@ -228,19 +228,19 @@ export default function TraumLandingPage() {
             >
               <div 
                 className="w-10 h-10 rounded-full border-2 flex items-center justify-center animate-bounce"
-                style={{ borderColor: `${colors.moss}50` }}
+                style={{ borderColor: `${colors.cream}60` }}
               >
                 <svg 
                   className="w-4 h-4" 
                   fill="none" 
-                  stroke={colors.moss} 
+                  stroke={colors.cream} 
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
               </div>
-              <span className="text-xs tracking-widest uppercase" style={{ color: `${colors.moss}80` }}>
-                Descubre mas
+              <span className="text-xs tracking-widest uppercase" style={{ color: `${colors.cream}CC` }}>
+                Descubre más
               </span>
             </div>
           </div>

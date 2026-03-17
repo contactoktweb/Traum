@@ -66,6 +66,9 @@ export const viewport: Viewport = {
   maximumScale: 5,
 }
 
+import { CartProvider } from '@/components/CartProvider'
+import { CartSidebar } from '@/components/CartSidebar'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -74,7 +77,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="font-sans antialiased">
-        {children}
+        <CartProvider>
+          {children}
+          <CartSidebar />
+        </CartProvider>
         <Analytics />
       </body>
     </html>
