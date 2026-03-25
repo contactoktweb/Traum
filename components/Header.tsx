@@ -53,7 +53,7 @@ export function Header() {
               fill
               className="object-contain drop-shadow-sm transition-all duration-300"
               style={{
-                filter: scrolled ? "brightness(0) invert(1)" : isTienda ? "brightness(0)" : "none"
+                filter: scrolled ? "brightness(0) invert(1)" : "brightness(0)"
               }}
               priority
             />

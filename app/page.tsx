@@ -85,102 +85,44 @@ export default function TraumLandingPage() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Diagonal split background */}
+        {/* Background Image */}
         <div className="absolute inset-0">
-          <div 
-            className="absolute inset-0"
-            style={{
-              background: colors.dark,
-            }}
+          <Image
+            src="/fondo.png"
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            priority
           />
         </div>
 
-        {/* Large decorative text background */}
-        <div 
-          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
-          style={{
-            opacity: isLoaded ? 0.03 : 0,
-            transition: "opacity 1s ease-out 0.3s",
-          }}
-        >
-          <span 
-            className="text-[30vw] font-black tracking-tighter whitespace-nowrap"
-            style={{ color: colors.cream }}
-          >
-            TRAUM
-          </span>
-        </div>
-
-        {/* Floating geometric shapes */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Circle */}
+        {/* Main content - horizontal distribution */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:pl-2 md:pr-12 flex flex-col items-start text-left">
+          {/* Eyebrow */}
           <div
-            className="absolute top-[15%] left-[10%] w-32 h-32 md:w-48 md:h-48 rounded-full border-2 animate-[spin_30s_linear_infinite]"
-            style={{ 
-              borderColor: `${colors.moss}20`,
-              opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.8s ease-out 0.5s",
-            }}
-          />
-          {/* Small dots cluster */}
-          <div
-            className="absolute top-[20%] right-[15%] animate-[float_6s_ease-in-out_infinite]"
+            className="flex items-center justify-start gap-3 mb-2"
             style={{
               opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.8s ease-out 0.6s",
+              transform: isLoaded ? "translateY(0)" : "translateY(20px)",
+              transition: "all 0.6s ease-out 0.2s",
             }}
           >
-            <div className="w-2 h-2 rounded-full mb-3" style={{ background: colors.moss }} />
-            <div className="w-1.5 h-1.5 rounded-full ml-4" style={{ background: colors.sand }} />
-            <div className="w-1 h-1 rounded-full mt-2" style={{ background: colors.leaf }} />
+            <div className="w-8 h-px" style={{ background: colors.moss }} />
+            <span className="text-[10px] tracking-[0.4em] uppercase" style={{ color: colors.moss }}>
+              Coming Soon
+            </span>
           </div>
-          {/* Line accent */}
-          <div
-            className="absolute bottom-[25%] left-[8%] w-px h-32 md:h-48"
-            style={{
-              background: `linear-gradient(to bottom, transparent, ${colors.moss}40, transparent)`,
-              opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.8s ease-out 0.7s",
-            }}
-          />
-          {/* Corner accent */}
-          <div
-            className="absolute bottom-[20%] right-[10%] w-20 h-20 md:w-28 md:h-28 border-r-2 border-b-2"
-            style={{
-              borderColor: `${colors.sand}30`,
-              opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.8s ease-out 0.8s",
-            }}
-          />
-        </div>
 
-        {/* Main content - side by side layout */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-0">
-          {/* Left side - Text */}
-          <div className="flex-1 text-center lg:text-left order-2 lg:order-1">
-            {/* Eyebrow */}
-            <div
-              className="flex items-center justify-center lg:justify-start gap-3 mb-6"
-              style={{
-                opacity: isLoaded ? 1 : 0,
-                transform: isLoaded ? "translateY(0)" : "translateY(20px)",
-                transition: "all 0.6s ease-out 0.2s",
-              }}
-            >
-              <div className="w-8 h-px" style={{ background: colors.moss }} />
-              <span className="text-xs tracking-[0.4em] uppercase" style={{ color: colors.moss }}>
-                Coming Soon
-              </span>
-            </div>
-
+          {/* Main content - vertical stack layout */}
+          <div className="flex flex-col items-start gap-y-2 w-full">
             {/* Main title */}
-            <h1 className="overflow-hidden mb-4">
+            <h1 className="overflow-hidden shrink-0">
               {"TRAUM".split("").map((char, i) => (
                 <span
                   key={i}
                   className="inline-block text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black tracking-tighter"
                   style={{
-                    color: colors.cream,
+                    color: colors.leaf,
                     transform: isLoaded ? "translateY(0) rotate(0deg)" : "translateY(100%) rotate(5deg)",
                     opacity: isLoaded ? 1 : 0,
                     transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.06}s`,
@@ -191,152 +133,19 @@ export default function TraumLandingPage() {
               ))}
             </h1>
 
-            {/* Subtitle with styled words */}
-            <div
-              className="text-lg md:text-xl lg:text-2xl font-light mb-8"
+            {/* Subtitle */}
+            <div 
+              className="text-sm md:text-base lg:text-lg font-light"
               style={{
                 opacity: isLoaded ? 1 : 0,
-                transform: isLoaded ? "translateY(0)" : "translateY(20px)",
+                transform: isLoaded ? "translateY(0)" : "translateY(10px)",
                 transition: "all 0.6s ease-out 0.8s",
               }}
             >
-              <span style={{ color: colors.cream }}>Donde el </span>
-              <span className="font-semibold" style={{ color: colors.sand }}>diseño</span>
-              <span style={{ color: colors.cream }}> encuentra la </span>
-              <span className="font-semibold" style={{ color: colors.sand }}>cultura</span>
-            </div>
-
-            {/* Tagline */}
-            <p
-              className="text-sm md:text-base max-w-md mx-auto lg:mx-0"
-              style={{
-                color: `${colors.cream}CC`,
-                opacity: isLoaded ? 1 : 0,
-                transition: "opacity 0.6s ease-out 1s",
-              }}
-            >
-              Cada pieza cuenta una historia. Cada objeto guarda un fragmento del viaje de sus creadores.
-            </p>
-
-            {/* CTA hint */}
-            <div
-              className="mt-10 flex items-center justify-center lg:justify-start gap-2"
-              style={{
-                opacity: isLoaded ? 1 : 0,
-                transition: "opacity 0.6s ease-out 1.1s",
-              }}
-            >
-              <div 
-                className="w-10 h-10 rounded-full border-2 flex items-center justify-center animate-bounce"
-                style={{ borderColor: `${colors.cream}60` }}
-              >
-                <svg 
-                  className="w-4 h-4" 
-                  fill="none" 
-                  stroke={colors.cream} 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </div>
-              <span className="text-xs tracking-widest uppercase" style={{ color: `${colors.cream}CC` }}>
-                Descubre más
-              </span>
-            </div>
-          </div>
-
-          {/* Right side - Mascot */}
-          <div className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2">
-            <div
-              ref={mascotRef}
-              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem]"
-              onMouseEnter={() => setHoverMascot(true)}
-              onMouseLeave={() => setHoverMascot(false)}
-              style={{
-                transform: `translate(${offset.x}px, ${offset.y}px) scale(${hoverMascot ? 1.02 : 1})`,
-                transition: "transform 0.15s ease-out",
-              }}
-            >
-              {/* Glow layers */}
-              <div
-                className="absolute inset-[-20%] rounded-full"
-                style={{ 
-                  background: `radial-gradient(circle, ${colors.leaf}20 0%, transparent 60%)`,
-                  animation: "pulse 4s ease-in-out infinite",
-                }}
-              />
-              <div
-                className="absolute inset-[-10%] rounded-full"
-                style={{ 
-                  background: `radial-gradient(circle, ${colors.moss}15 0%, transparent 50%)`,
-                  animation: "pulse 3s ease-in-out infinite 0.5s",
-                }}
-              />
-
-              {/* Orbiting elements */}
-              <div
-                className="absolute inset-[-15%] rounded-full border border-dashed animate-[spin_40s_linear_infinite]"
-                style={{ borderColor: `${colors.moss}15` }}
-              >
-                <div
-                  className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                >
-                  <div className="w-3 h-3 rounded-full" style={{ background: colors.moss, boxShadow: `0 0 10px ${colors.moss}` }} />
-                </div>
-              </div>
-              <div
-                className="absolute inset-[-8%] rounded-full border animate-[spin_25s_linear_infinite_reverse]"
-                style={{ borderColor: `${colors.sand}10` }}
-              >
-                <div
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2"
-                >
-                  <div className="w-2 h-2 rounded-full" style={{ background: colors.sand }} />
-                </div>
-              </div>
-
-              {/* Mascot image */}
-              <div
-                className="relative w-full h-full animate-[float_5s_ease-in-out_infinite]"
-                style={{
-                  opacity: isLoaded ? 1 : 0,
-                  transform: isLoaded ? "scale(1)" : "scale(0.9)",
-                  transition: "all 0.8s ease-out 0.4s",
-                }}
-              >
-                <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-removebg-preview-3-O8EdCEPdcNg3jluUVpGOxva0zHUMld.png"
-                  alt="Traum Mascota"
-                  fill
-                  className="object-contain drop-shadow-[0_0_60px_rgba(85,122,43,0.5)]"
-                  priority
-                />
-              </div>
-
-              {/* Eye highlight */}
-              <div
-                className="absolute w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-white pointer-events-none"
-                style={{
-                  top: "27%",
-                  left: "37%",
-                  transform: `translate(${eye.x}px, ${eye.y}px)`,
-                  transition: "transform 0.08s linear",
-                  boxShadow: "0 0 8px rgba(255,255,255,0.9)",
-                }}
-              />
-
-              {/* Decorative badge */}
-              <div
-                className="absolute -bottom-2 -right-2 md:bottom-4 md:right-0 px-4 py-2 rounded-full"
-                style={{
-                  background: colors.sand,
-                  opacity: isLoaded ? 1 : 0,
-                  transform: isLoaded ? "scale(1) rotate(-3deg)" : "scale(0)",
-                  transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1s",
-                }}
-              >
-                <span className="text-xs font-bold tracking-wide" style={{ color: colors.dark }}>2025</span>
-              </div>
+              <span style={{ color: colors.moss }}>Donde el </span>
+              <span className="font-semibold" style={{ color: colors.leaf }}>diseño</span>
+              <span style={{ color: colors.moss }}> encuentra la </span>
+              <span className="font-semibold" style={{ color: colors.leaf }}>cultura</span>
             </div>
           </div>
         </div>
