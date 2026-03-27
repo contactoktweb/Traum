@@ -67,7 +67,7 @@ export default function TraumLandingPage() {
   const eye = getEyeOffset()
 
   return (
-    <main className="relative overflow-x-hidden bg-[#354523]">
+    <main className="relative overflow-x-hidden bg-[#FAF6EE]">
       <Header />
       {/* Cursor */}
       <div
@@ -157,10 +157,10 @@ export default function TraumLandingPage() {
         id="about" 
         ref={revealRef} 
         className="relative min-h-screen py-24 md:py-32 overflow-hidden" 
-        style={{ background: colors.dark }}
+        style={{ background: '#FAF6EE' }}
       >
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-[0.15]">
+        <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none opacity-[0.07]">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path d="M100 0 L100 100 L0 100 Z" fill={colors.moss} />
           </svg>
@@ -170,7 +170,7 @@ export default function TraumLandingPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6">
           {/* Section Header */}
-          <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/10 pb-12">
+          <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b pb-12" style={{ borderColor: `${colors.moss}30` }}>
             <div>
               <div 
                 className="inline-flex items-center gap-3 mb-6"
@@ -179,15 +179,15 @@ export default function TraumLandingPage() {
                   transition: "opacity 0.6s ease-out",
                 }}
               >
-                <div className="w-12 h-px" style={{ background: colors.sand }} />
-                <span className="text-xs tracking-[0.3em] uppercase font-bold" style={{ color: colors.sand }}>
+                <div className="w-12 h-px" style={{ background: colors.leaf }} />
+                <span className="text-xs tracking-[0.3em] uppercase font-bold" style={{ color: colors.leaf }}>
                   Esencia Traum
                 </span>
               </div>
               <h2
                 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight max-w-2xl"
                 style={{
-                  color: colors.cream,
+                  color: colors.dark,
                   opacity: revealVisible ? 1 : 0,
                   transform: revealVisible ? "translateY(0)" : "translateY(30px)",
                   transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s",
@@ -200,7 +200,7 @@ export default function TraumLandingPage() {
             <p 
               className="text-lg font-light max-w-sm"
               style={{ 
-                color: `${colors.cream}CC`,
+                color: `${colors.dark}99`,
                 opacity: revealVisible ? 1 : 0,
                 transition: "opacity 0.8s ease-out 0.3s"
               }}
@@ -221,12 +221,12 @@ export default function TraumLandingPage() {
               }}
             >
               <div className="flex items-center gap-6 mb-8">
-                <span className="text-4xl md:text-5xl font-light opacity-30" style={{ color: colors.cream }}>01</span>
-                <h3 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: colors.cream }}>
+                <span className="text-4xl md:text-5xl font-light opacity-30" style={{ color: colors.leaf }}>01</span>
+                <h3 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: colors.dark }}>
                   El Concepto
                 </h3>
               </div>
-              <div className="prose prose-lg" style={{ color: `${colors.cream}BB` }}>
+              <div className="prose prose-lg" style={{ color: `${colors.dark}AA` }}>
                 <p className="text-lg leading-relaxed">
                   Nacemos en la intersección donde el diseño contemporáneo, la riqueza cultural y la narrativa personal convergen para crear algo único. No hacemos simplemente ropa o accesorios; diseñamos objetos con propósito y significado.
                 </p>
@@ -243,14 +243,14 @@ export default function TraumLandingPage() {
               }}
             >
               <div className="flex items-center gap-6 mb-8">
-                <span className="text-4xl md:text-5xl font-light opacity-30" style={{ color: colors.cream }}>02</span>
-                <h3 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: colors.cream }}>
+                <span className="text-4xl md:text-5xl font-light opacity-30" style={{ color: colors.leaf }}>02</span>
+                <h3 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: colors.dark }}>
                   El Origen
                 </h3>
               </div>
-              <div className="prose prose-lg" style={{ color: `${colors.cream}BB` }}>
+              <div className="prose prose-lg" style={{ color: `${colors.dark}AA` }}>
                 <p className="text-lg leading-relaxed">
-                  Somos la unión de dos mentes creativas impulsadas por la pasión. Lo que comenzó como una amistad se transformó en un <span className="font-semibold" style={{ color: colors.sand }}>laboratorio de ideas</span>. Durante más de cuatro años, hemos desafiado lo convencional buscando la excelencia en cada detalle.
+                  Somos la unión de dos mentes creativas impulsadas por la pasión. Lo que comenzó como una amistad se transformó en un <span className="font-semibold" style={{ color: colors.leaf }}>laboratorio de ideas</span>. Durante más de cuatro años, hemos desafiado lo convencional buscando la excelencia en cada detalle.
                 </p>
               </div>
             </div>
@@ -260,10 +260,9 @@ export default function TraumLandingPage() {
           <div
             className="mt-24 p-8 md:p-12 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden"
             style={{
-              backgroundImage: "url('/fondo-bruto.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
+              background: 'rgba(255,255,255,0.65)',
+              backdropFilter: 'blur(12px)',
+              border: `1px solid ${colors.moss}30`,
               opacity: revealVisible ? 1 : 0,
               transform: revealVisible ? "scale(1)" : "scale(0.98)",
               transition: "all 1s ease-out 0.6s",
@@ -274,11 +273,11 @@ export default function TraumLandingPage() {
                 El Futuro
               </span>
               <p className="text-2xl md:text-3xl font-light" style={{ color: colors.dark }}>
-                "Algo grande se está gestando en nuestro taller."
+                &quot;Algo grande se está gestando en nuestro taller.&quot;
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full border border-black/20 flex items-center justify-center shrink-0">
-               <svg className="w-5 h-5" fill="none" stroke={colors.dark} viewBox="0 0 24 24">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ border: `1px solid ${colors.leaf}40`, background: `${colors.leaf}10` }}>
+               <svg className="w-5 h-5" fill="none" stroke={colors.leaf} viewBox="0 0 24 24">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                </svg>
             </div>
@@ -286,9 +285,9 @@ export default function TraumLandingPage() {
         </div>
 
         {/* Footer conform to GEMINI.md */}
-        <footer className="mt-32 pt-12 pb-8 border-t border-white/10 mx-6 md:mx-12">
+        <footer className="mt-32 pt-12 pb-8 mx-6 md:mx-12" style={{ borderTop: `1px solid ${colors.moss}20` }}>
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-[10px] uppercase tracking-[0.3em] font-medium" style={{ color: colors.cream }}>
+            <div className="text-[10px] uppercase tracking-[0.3em] font-medium" style={{ color: `${colors.dark}99` }}>
               © {new Date().getFullYear()} TRAUM STUDIO. ALL RIGHTS RESERVED.
             </div>
             
@@ -297,14 +296,14 @@ export default function TraumLandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-2 text-xs font-bold transition-all duration-300 hover:scale-105"
-              style={{ color: colors.cream }}
+              style={{ color: colors.dark }}
             >
               <span className="opacity-60 group-hover:opacity-100 transition-opacity">Desarrollado por K&T</span>
               <svg 
                 className="w-4 h-4 transition-transform duration-300 group-hover:scale-125" 
                 fill="currentColor" 
                 viewBox="0 0 24 24"
-                style={{ color: '#FFFFFF' }} // White heart as background is dark
+                style={{ color: '#000000' }}
               >
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
