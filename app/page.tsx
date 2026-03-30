@@ -121,7 +121,7 @@ export default function TraumLandingPage() {
                   key={i}
                   className="inline-block text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black tracking-tighter"
                   style={{
-                    color: colors.leaf,
+                    color: colors.dark,
                     transform: isLoaded ? "translateY(0) rotate(0deg)" : "translateY(100%) rotate(5deg)",
                     opacity: isLoaded ? 1 : 0,
                     transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.3 + i * 0.06}s`,
@@ -142,9 +142,9 @@ export default function TraumLandingPage() {
               }}
             >
               <span style={{ color: colors.moss }}>Donde el </span>
-              <span className="font-semibold" style={{ color: colors.leaf }}>diseño</span>
+              <span className="font-semibold" style={{ color: colors.dark }}>diseño</span>
               <span style={{ color: colors.moss }}> encuentra la </span>
-              <span className="font-semibold" style={{ color: colors.leaf }}>cultura</span>
+              <span className="font-semibold" style={{ color: colors.dark }}>cultura</span>
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function TraumLandingPage() {
       <section 
         id="about" 
         ref={revealRef} 
-        className="relative min-h-screen py-24 md:py-32 overflow-hidden" 
+        className="relative pt-24 md:pt-32 pb-6 overflow-hidden" 
         style={{ background: '#FAF6EE' }}
       >
         {/* Decorative elements */}
@@ -258,34 +258,34 @@ export default function TraumLandingPage() {
 
           {/* Vision/Banner */}
           <div
-            className="mt-24 p-8 md:p-12 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden"
+            className="mt-24 p-8 md:p-12 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#557A2B20]"
             style={{
-              background: 'rgba(255,255,255,0.65)',
+              background: `${colors.dark}E6`, // #354523 at 90% opacity
               backdropFilter: 'blur(12px)',
-              border: `1px solid ${colors.moss}30`,
+              border: `1px solid ${colors.moss}40`,
               opacity: revealVisible ? 1 : 0,
               transform: revealVisible ? "scale(1)" : "scale(0.98)",
               transition: "all 1s ease-out 0.6s",
             }}
           >
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.3em] block mb-4" style={{ color: colors.leaf }}>
+              <span className="text-xs font-bold uppercase tracking-[0.3em] block mb-4" style={{ color: colors.cream }}>
                 El Futuro
               </span>
-              <p className="text-2xl md:text-3xl font-light" style={{ color: colors.dark }}>
+              <p className="text-2xl md:text-3xl font-light" style={{ color: '#FAF6EE' }}>
                 &quot;Algo grande se está gestando en nuestro taller.&quot;
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ border: `1px solid ${colors.leaf}40`, background: `${colors.leaf}10` }}>
-               <svg className="w-5 h-5" fill="none" stroke={colors.leaf} viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-110" style={{ background: '#FAF6EE' }}>
+               <svg className="w-5 h-5" fill="none" stroke={colors.dark} viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                </svg>
             </div>
           </div>
         </div>
 
         {/* Footer conform to GEMINI.md */}
-        <footer className="mt-32 pt-12 pb-8 mx-6 md:mx-12" style={{ borderTop: `1px solid ${colors.moss}20` }}>
+        <footer className="mt-24 pt-12 pb-6 mx-6 md:mx-12" style={{ borderTop: `1px solid ${colors.moss}20` }}>
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-[10px] uppercase tracking-[0.3em] font-medium" style={{ color: `${colors.dark}99` }}>
               © {new Date().getFullYear()} TRAUM STUDIO. ALL RIGHTS RESERVED.
