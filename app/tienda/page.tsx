@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/Header"
@@ -17,9 +17,350 @@ const colors = {
 
 export default function TiendaPage() {
   const { addToCart } = useCart()
+  const [mounted, setMounted] = useState(false)
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [isPhase1, setIsPhase1] = useState(true)
 
+  // Set the target date for Phase 1 to end (e.g., April 15, 2026)
+  const TARGET_DATE = new Date("2026-04-15T00:00:00").getTime()
+
+  useEffect(() => {
+    setMounted(true)
+    
+    // Initial check
+    const now = new Date().getTime()
+    if (TARGET_DATE - now < 0) {
+      setIsPhase1(false)
+      return
+    }
+
+    const interval = setInterval(() => {
+      const currentTime = new Date().getTime()
+      const distance = TARGET_DATE - currentTime
+
+      if (distance < 0) {
+        clearInterval(interval)
+        setIsPhase1(false)
+        return
+      }
+
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen relative bg-[#FAF6EE]">
+        <Header />
+      </main>
+    )
+  }
+
+  // PHASE 1: COMPTE REGRESSIVE (COUNTDOWN)
+  if (isPhase1) {
+    return (
+      <main className="min-h-screen relative flex flex-col justify-between overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/fondo-contador.png')", backgroundColor: '#f3efe6', color: '#37412a' }}>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Chewy&family=Montserrat:wght@700;800;900&display=swap');
+
+          .countdown-phase1 {
+              --bg-color: #f3efe6;
+              --dark-green: #37412a;
+              --fry-yellow: #ffb72b;
+              --fry-dark: #d68710;
+              --fry-shadow: #995c00;
+              --tape-bg: #e6dfcd;
+              font-family: 'Montserrat', sans-serif;
+          }
+
+          .tape-banner {
+              background-color: var(--tape-bg);
+              padding: 8px 30px;
+              font-size: 1.1rem;
+              font-weight: 900;
+              letter-spacing: 6px;
+              color: var(--dark-green);
+              position: relative;
+              margin-bottom: 3rem;
+              box-shadow: 2px 4px 8px rgba(0,0,0,0.08);
+              clip-path: polygon(1% 0%, 99% 2%, 100% 100%, 0% 98%);
+              transform: rotate(-2deg);
+              animation: floatTape 4s ease-in-out infinite;
+          }
+          
+          @keyframes floatTape {
+              0%, 100% { transform: rotate(-2deg) translateY(0); }
+              50% { transform: rotate(-1deg) translateY(-5px); }
+          }
+
+          .tape-banner::before, .tape-banner::after {
+              content: '•';
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              font-size: 1.2rem;
+              color: rgba(0,0,0,0.15);
+          }
+          .tape-banner::before { left: 8px; }
+          .tape-banner::after { right: 8px; }
+
+          .countdown-wrapper {
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 20px;
+              margin: 2rem 0 12rem 0;
+              width: 100%;
+          }
+
+          .time-group {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          }
+          
+          .time-group:hover {
+              transform: scale(1.05) rotate(2deg);
+          }
+
+          .time-value {
+              font-family: 'Chewy', cursive;
+              font-size: clamp(5rem, 16vw, 15rem);
+              color: var(--fry-yellow);
+              line-height: 0.8;
+              letter-spacing: 2px;
+              text-shadow: 
+                  1px 1px 0px #fac14d,
+                  2px 2px 0px var(--fry-dark),
+                  3px 3px 0px var(--fry-dark),
+                  4px 4px 0px var(--fry-dark),
+                  5px 5px 0px var(--fry-shadow),
+                  6px 6px 0px var(--fry-shadow),
+                  7px 7px 0px var(--fry-shadow),
+                  8px 8px 0px var(--fry-shadow),
+                  12px 12px 15px rgba(0,0,0,0.3);
+          }
+
+          .time-label {
+              font-family: 'Caveat', cursive;
+              font-size: clamp(1rem, 2vw, 1.4rem);
+              color: var(--bg-color);
+              background-color: var(--dark-green);
+              padding: 2px 12px;
+              margin-top: 8px;
+              border-radius: 3px;
+              transform: skewX(-10deg) rotate(-3deg);
+          }
+
+          .slash-fry {
+              width: clamp(15px, 3vw, 25px);
+              height: clamp(80px, 15vw, 140px);
+              background: linear-gradient(100deg, #ffd371 0%, #ffb72b 50%, #e08d00 100%);
+              border-radius: 8px;
+              transform: rotate(25deg);
+              box-shadow: 
+                  inset 2px 2px 5px rgba(255,255,255,0.4),
+                  3px 3px 0px var(--fry-dark),
+                  6px 6px 0px var(--fry-shadow),
+                  12px 12px 15px rgba(0,0,0,0.3);
+              margin: 0 10px;
+              position: relative;
+              z-index: 5;
+          }
+
+          .hand-drawn {
+              position: absolute;
+              pointer-events: none;
+              z-index: 0;
+          }
+          
+          .arrow-l { top: -20px; left: -10%; width: 100px; transform: rotate(-10deg); }
+          .arrow-r { top: -40px; right: -10%; width: 120px; transform: scaleX(-1) rotate(-15deg); }
+          .underline { bottom: -30px; left: 50%; transform: translateX(-50%); width: 350px; }
+
+          .date-block {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              transform: translateY(-5rem);
+              position: relative;
+              z-index: 10;
+          }
+
+          .badge-container {
+              display: flex;
+              align-items: center;
+              gap: 15px;
+              margin-bottom: 10px;
+          }
+
+          .badge-line {
+              width: 40px;
+              height: 2px;
+              background-color: var(--dark-green);
+          }
+
+          .badge {
+              background-color: var(--dark-green);
+              color: var(--bg-color);
+              padding: 10px 40px;
+              font-size: 1.3rem;
+              letter-spacing: 5px;
+              font-weight: 800;
+              text-align: center;
+          }
+
+          .release-text {
+              font-size: 1.2rem;
+              font-weight: 800;
+              letter-spacing: 3px;
+              text-align: center;
+          }
+
+          .limited-stamp {
+              position: absolute;
+              bottom: 10%;
+              right: 10%;
+              width: 160px;
+              height: 100px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              font-weight: 900;
+              font-size: 1rem;
+              letter-spacing: 1px;
+              line-height: 1.2;
+              transform: rotate(-8deg);
+              z-index: 20;
+          }
+
+          .limited-stamp svg {
+              position: absolute;
+              top: 0; left: 0;
+              width: 100%; height: 100%;
+          }
+
+          .limited-stamp span {
+              position: relative;
+              z-index: 2;
+          }
+
+          @media (max-width: 900px) {
+              .hand-drawn { display: none; }
+              .countdown-wrapper { gap: 10px; margin-bottom: 1rem; }
+              .date-block { transform: translateY(-1rem); }
+              .badge-line { width: 30px; height: 2px; }
+              .badge { padding: 10px 20px; font-size: 1.2rem; letter-spacing: 3px; }
+              .release-text { font-size: 1rem; letter-spacing: 2px; }
+              .limited-stamp { right: 5%; bottom: 12%; width: 120px; height: 80px; font-size: 0.8rem; }
+          }
+        ` }} />
+        
+        <Header />
+
+        <div className="countdown-phase1 flex-grow flex flex-col items-center justify-center w-full max-w-[1000px] mx-auto p-4 md:p-8 relative z-10 pt-24 md:pt-32">
+          
+          <div className="tape-banner">NUEVO DROP</div>
+
+          <div className="countdown-wrapper">
+              
+              {/* Flecha SVG Izquierda */}
+              <img className="hand-drawn arrow-l" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50' fill='none' stroke='%2337412a' stroke-width='3' stroke-linecap='round'><path d='M90 10 Q50 0 10 40 M10 40 L30 35 M10 40 L20 20'/></svg>" alt="" />
+
+              {/* Bloque Días */}
+              <div className="time-group">
+                  <span className="time-value" id="days">{String(timeLeft.days).padStart(2, '0')}</span>
+                  <span className="time-label">Días</span>
+              </div>
+              
+              {/* Separador Papa Frita */}
+              <div className="slash-fry"></div>
+
+              {/* Bloque Horas */}
+              <div className="time-group">
+                  <span className="time-value" id="hours">{String(timeLeft.hours).padStart(2, '0')}</span>
+                  <span className="time-label">Hrs</span>
+              </div>
+
+              {/* Separador Papa Frita */}
+              <div className="slash-fry"></div>
+
+              {/* Bloque Minutos */}
+              <div className="time-group">
+                  <span className="time-value" id="minutes">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                  <span className="time-label">Min</span>
+              </div>
+
+              {/* Flecha SVG Derecha */}
+              <img className="hand-drawn arrow-r" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50' fill='none' stroke='%2337412a' stroke-width='3' stroke-linecap='round'><path d='M90 10 Q50 0 10 40 M10 40 L30 35 M10 40 L20 20'/></svg>" alt="" />
+              
+              {/* Subrayado Garabato */}
+              <img className="hand-drawn underline" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 40' fill='none' stroke='%2337412a' stroke-width='4' stroke-linecap='round'><path d='M10 20 Q 80 35, 150 20 T 290 20 M 120 30 L 160 30 M 130 38 L 150 38'/></svg>" alt="" />
+          </div>
+
+          <div className="date-block">
+              <div className="badge-container">
+                  <div className="badge-line"></div>
+                  <div className="badge">FECHA DE LANZAMIENTO</div>
+                  <div className="badge-line"></div>
+              </div>
+              
+              <div className="release-text">LANZAMIENTO 7:00 PM (CET)</div>
+          </div>
+        </div>
+
+        {/* Estampilla Dibujada */}
+        <div className="countdown-phase1 limited-stamp">
+            {/* Círculo orgánico en SVG */}
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M50 5 C 80 5, 95 30, 95 50 C 95 80, 80 95, 50 95 C 20 95, 5 80, 5 50 C 5 20, 20 5, 50 5 Z" fill="none" stroke="#37412a" strokeWidth="3" strokeDasharray="8 4" />
+            </svg>
+            <span>EDICIÓN <br /> LIMITADA</span>
+        </div>
+
+        {/* Global Footer (Compliant with GEMINI.md) */}
+        <footer className="py-8 border-t border-black/5 mx-6 md:mx-12 relative z-10 mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-[10px] uppercase tracking-[0.3em] font-medium" style={{ color: colors.dark }}>
+              © {new Date().getFullYear()} TRAUM STUDIO. ALL RIGHTS RESERVED.
+            </div>
+            
+            <a
+              href="https://www.kytcode.lat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2 text-xs font-bold transition-all duration-300 hover:opacity-70"
+              style={{ color: colors.dark }}
+            >
+              <span>Desarrollado por K&T</span>
+              <svg 
+                className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </a>
+          </div>
+        </footer>
+      </main>
+    )
+  }
+
+  // PHASE 2: LA TIENDA
   return (
-    <main className="min-h-screen relative bg-[#EBD69F]"> {/* Using cream background for the store */}
+    <main className="min-h-screen relative bg-[#FAF6EE]"> {/* Using #FAF6EE background for the store Phase 2 */}
       <Header />
       
       {/* Background elements */}
