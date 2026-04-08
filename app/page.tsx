@@ -114,7 +114,7 @@ export default function TraumLandingPage() {
           {/* Main content - vertical stack layout */}
           <div className="flex flex-col items-center md:items-start gap-y-2 w-full">
             {/* Main title */}
-            <h1 className="overflow-hidden shrink-0 flex justify-center w-full">
+            <h1 className="overflow-hidden shrink-0 flex justify-center md:justify-start w-full">
               {"TRAUM".split("").map((char, i) => (
                 <span
                   key={i}
