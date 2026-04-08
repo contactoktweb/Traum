@@ -135,7 +135,7 @@ export default function TiendaPage() {
 
           .time-value {
               font-family: 'Chewy', cursive;
-              font-size: clamp(5rem, 16vw, 15rem);
+              font-size: clamp(6rem, 18vw, 16rem);
               color: var(--fry-yellow);
               line-height: 0.8;
               letter-spacing: 2px;
@@ -163,8 +163,8 @@ export default function TiendaPage() {
           }
 
           .slash-fry {
-              width: clamp(15px, 3vw, 25px);
-              height: clamp(80px, 15vw, 140px);
+              width: clamp(18px, 3.5vw, 28px);
+              height: clamp(90px, 18vw, 160px);
               background: linear-gradient(100deg, #ffd371 0%, #ffb72b 50%, #e08d00 100%);
               border-radius: 8px;
               transform: rotate(25deg);
@@ -258,12 +258,12 @@ export default function TiendaPage() {
 
           @media (max-width: 900px) {
               .hand-drawn { display: none; }
-              .countdown-wrapper { gap: 10px; margin-bottom: 1rem; }
-              .date-block { transform: translateY(-1rem); }
-              .badge-line { width: 30px; height: 2px; }
-              .badge { padding: 10px 20px; font-size: 1.2rem; letter-spacing: 3px; }
-              .release-text { font-size: 1rem; letter-spacing: 2px; }
-              .limited-stamp { right: 5%; bottom: 12%; width: 120px; height: 80px; font-size: 0.8rem; }
+              .countdown-wrapper { gap: 10px; margin: 2rem 0 3rem 0; }
+              .date-block { transform: translateY(0); }
+              .badge-line { width: 20px; height: 2px; }
+              .badge { padding: 12px 16px; font-size: 1rem; letter-spacing: 2px; line-height: 1.2; }
+              .release-text { font-size: 0.9rem; letter-spacing: 1.5px; margin-top: 15px; }
+              .limited-stamp { right: 5%; bottom: 8%; width: 100px; height: 70px; font-size: 0.75rem; }
           }
         ` }} />
         

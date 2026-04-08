@@ -85,21 +85,20 @@ export default function TraumLandingPage() {
 
       {/* Hero */}
       <section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pb-24"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pb-24 bg-[position:30%_center] md:bg-[position:center]"
         style={{
           backgroundImage: "url('/fondo.png')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 90%)",
         }}
       >
 
         {/* Main content - horizontal distribution */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:pl-2 md:pr-12 flex flex-col items-start text-left md:translate-y-12">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-2 md:pl-2 md:pr-12 flex flex-col items-center text-center md:items-start md:text-left md:translate-y-12">
           {/* Eyebrow */}
           <div
-            className="flex items-center justify-start gap-3 mb-2"
+            className="flex items-center justify-center md:justify-start gap-3 mb-2"
             style={{
               opacity: isLoaded ? 1 : 0,
               transform: isLoaded ? "translateY(0)" : "translateY(20px)",
@@ -113,13 +112,13 @@ export default function TraumLandingPage() {
           </div>
 
           {/* Main content - vertical stack layout */}
-          <div className="flex flex-col items-start gap-y-2 w-full">
+          <div className="flex flex-col items-center md:items-start gap-y-2 w-full">
             {/* Main title */}
-            <h1 className="overflow-hidden shrink-0">
+            <h1 className="overflow-hidden shrink-0 flex justify-center w-full">
               {"TRAUM".split("").map((char, i) => (
                 <span
                   key={i}
-                  className="inline-block text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black tracking-tighter"
+                  className="inline-block text-[6.5rem] leading-[0.85] sm:text-[8rem] md:text-[9rem] lg:text-[10rem] font-black tracking-tighter"
                   style={{
                     color: colors.dark,
                     transform: isLoaded ? "translateY(0) rotate(0deg)" : "translateY(100%) rotate(5deg)",
