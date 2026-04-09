@@ -85,9 +85,8 @@ export default function TraumLandingPage() {
 
       {/* Hero */}
       <section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden pb-24 bg-[position:30%_center] md:bg-[position:center]"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pb-24 bg-[position:30%_center] md:bg-[position:center] bg-[url('/fondo-completo-mobile.png')] md:bg-[url('/fondo.png')]"
         style={{
-          backgroundImage: "url('/fondo.png')",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 90%)",

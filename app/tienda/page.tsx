@@ -66,7 +66,7 @@ export default function TiendaPage() {
   // PHASE 1: COMPTE REGRESSIVE (COUNTDOWN)
   if (isPhase1) {
     return (
-      <main className="min-h-screen relative flex flex-col justify-between overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/fondo-contador.png')", backgroundColor: '#f3efe6', color: '#37412a' }}>
+      <main className="min-h-screen relative flex flex-col justify-between overflow-hidden bg-cover bg-center bg-no-repeat bg-[url('/fondo-completo-mobile.png')] md:bg-[url('/fondo-contador.png')]" style={{ backgroundColor: '#f3efe6', color: '#37412a' }}>
         <style dangerouslySetInnerHTML={{ __html: `
           @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Chewy&family=Montserrat:wght@700;800;900&display=swap');
 
