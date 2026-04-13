@@ -3,8 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Header } from '@/components/Header'
-import { getProductById, getAllProductIds } from '@/lib/products'
 import { AddToCartButton } from './AddToCartButton'
+import { client } from "@/sanity/lib/client"
+import { PRODUCT_BY_ID_QUERY, PRODUCTS_QUERY, GLOBAL_CONFIG_QUERY } from "@/sanity/lib/queries"
+import { SocialLinks } from "@/components/SocialLinks"
 
 const colors = {
   dark: "#354523",
@@ -15,16 +17,16 @@ const colors = {
 }
 
 export async function generateStaticParams() {
-  const ids = getAllProductIds()
-  return ids.map((id) => ({
-    id: id,
+  const products = await client.fetch(PRODUCTS_QUERY)
+  return products.map((product: any) => ({
+    id: product.id,
   }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const product = getProductById(id)
-  
+  const product = await client.fetch(PRODUCT_BY_ID_QUERY, { id })
+
   if (!product) {
     return {
       title: 'Producto No Encontrado | Traum',
@@ -39,7 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const product = getProductById(id)
+  const product = await client.fetch(PRODUCT_BY_ID_QUERY, { id })
+  const globalConfig = await client.fetch(GLOBAL_CONFIG_QUERY)
 
   if (!product) {
     notFound()
@@ -171,7 +174,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className="text-[10px] uppercase tracking-[0.3em] font-medium" style={{ color: colors.dark }}>
             © {new Date().getFullYear()} TRAUM STUDIO. ALL RIGHTS RESERVED.
           </div>
-          
+                    <SocialLinks config={globalConfig} iconColor={colors.dark} />
           <a
             href="https://www.kytcode.lat"
             target="_blank"

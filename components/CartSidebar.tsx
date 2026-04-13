@@ -1,164 +1,205 @@
 "use client"
 
-import { useCart } from "./CartProvider"
+import { useCart } from "@/components/CartProvider"
 import Image from "next/image"
-import { useEffect } from "react"
-
-const colors = {
-  dark: "#354523",
-  cream: "#EBD69F",
-  leaf: "#557A2B",
-  moss: "#869D3D",
-  sand: "#D5B87E",
-}
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import "../app/cart.css"
 
 export function CartSidebar() {
   const { isCartOpen, toggleCart, cartItems, updateQuantity, removeFromCart, cartTotal } = useCart()
+  const router = useRouter()
+  
+  const [animClass, setAnimClass] = useState("")
+  const [isVisible, setIsVisible] = useState(false)
+  const [isOpenVisual, setIsOpenVisual] = useState(false)
+  const [isEntering, setIsEntering] = useState(false)
+  const [isRetracting, setIsRetracting] = useState(false)
 
-  // Prevent background scrolling when cart is open
   useEffect(() => {
     if (isCartOpen) {
+      setIsVisible(true)
+      setIsOpenVisual(false)
+      setIsEntering(true)
+      setIsRetracting(false)
+      setAnimClass("anim-print-in")
       document.body.style.overflow = "hidden"
+
+      const rafId = requestAnimationFrame(() => {
+        setIsOpenVisual(true)
+      })
+
+      const enterTimer = setTimeout(() => {
+        setIsEntering(false)
+      }, 900)
+
+      return () => {
+        cancelAnimationFrame(rafId)
+        clearTimeout(enterTimer)
+      }
     } else {
+      setIsOpenVisual(false)
+      setIsEntering(false)
+      if (animClass !== "anim-print-drop") {
+        setIsRetracting(true)
+        setAnimClass("anim-print-out-up")
+      } else {
+        setIsRetracting(false)
+      }
+      
       document.body.style.overflow = "unset"
+      
+      const timer = setTimeout(() => {
+        setIsVisible(false)
+        setAnimClass("")
+        setIsRetracting(false)
+      }, 1500) // Ensure enough time for fade out or drop
+      return () => clearTimeout(timer)
     }
-    return () => { document.body.style.overflow = "unset" }
   }, [isCartOpen])
+
+  const handleBuy = () => {
+    setAnimClass("anim-print-drop")
+    setIsRetracting(false)
+    
+    // Keep the drop visible before route transition to avoid a cut-off effect.
+    setTimeout(() => {
+      router.push('/checkout')
+      // Actually flag the cart logic as closed right as we redirect
+      toggleCart()
+    }, 1450)
+  }
+
+  const handleClose = () => {
+    toggleCart()
+  }
+
+  if (!isVisible && !isCartOpen) return null;
 
   return (
     <>
-      {/* Overlay */}
       <div 
-        className={`fixed inset-0 z-[1010] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-        onClick={toggleCart}
+        className={`cart-overlay ${isOpenVisual ? 'open' : 'closed'}`}
+        onClick={handleClose}
       />
 
-      {/* Sidebar Drawer */}
-      <div 
-        className={`fixed top-0 right-0 h-full w-full sm:w-[500px] z-[1020] bg-[#EBD69F] transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col shadow-2xl ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 sm:p-8 border-b border-[#354523]/10">
-          <h2 className="text-xl font-black uppercase tracking-widest text-[#354523]">Tu Orden</h2>
-          <button 
-            onClick={toggleCart}
-            className="p-2 rounded-full hover:bg-[#354523]/5 transition-colors text-[#354523]"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6">
-          {cartItems.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-50 space-y-4 text-[#354523]">
-              <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              <p className="font-bold uppercase tracking-widest text-sm">El carrito está vacío</p>
+      <div className="cart-container">
+        <div className={`machine-wrapper ${isOpenVisual ? 'visible' : 'hidden'}`}>
+          
+          <div className="machine-slot-top">
+            <div className="machine-lip" onClick={handleClose} style={{cursor: 'pointer'}} title="Cerrar el recibo">
             </div>
-          ) : (
-            cartItems.map((item) => (
-              <div key={`${item.id}-${item.size}`} className="flex gap-4 p-4 rounded-2xl bg-white/40 border border-white/20 shadow-sm relative group">
-                {/* Remove button */}
-                <button 
-                  onClick={() => removeFromCart(item.id, item.size)}
-                  className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#354523] text-[#EBD69F] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-
-                {/* Prod Image */}
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-white/50 border border-black/5 flex items-center justify-center p-2">
-                  <Image src={item.image} alt={item.name} fill className="object-contain drop-shadow-md" />
-                </div>
-
-                {/* Prod Info */}
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-[#354523] leading-tight pr-4">{item.name}</h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#557A2B] mt-1">{item.edition}</p>
-                    <p className="text-xs text-[#354523]/60 mt-0.5">Talla: {item.size}</p>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-2">
-                    <p className="text-sm font-bold text-[#354523]">
-                      $ {item.price.toLocaleString('es-CO')}
-                    </p>
-                    
-                    {/* Quantity controls */}
-                    <div className="flex items-center gap-3 bg-[#354523]/5 rounded-full px-3 py-1 border border-[#354523]/10">
-                      <button 
-                        onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                        className="text-[#354523] hover:opacity-50 transition-opacity"
-                      >
-                        -
-                      </button>
-                      <span className="text-xs font-bold text-[#354523] w-4 text-center">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                        className="text-[#354523] hover:opacity-50 transition-opacity"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Footer / Checkout */}
-        {cartItems.length > 0 && (
-          <div className="p-6 sm:p-8 bg-[#354523] text-[#EBD69F] rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between text-sm opacity-80">
-                <span>Subtotal</span>
-                <span>$ {cartTotal.toLocaleString('es-CO')}</span>
-              </div>
-              <div className="flex justify-between text-sm opacity-80">
-                <span>Envío</span>
-                <span>Calculado en el checkout</span>
-              </div>
-              <div className="flex justify-between text-xl font-black pt-3 border-t border-[#EBD69F]/20">
-                <span>Total (COP)</span>
-                <span>$ {cartTotal.toLocaleString('es-CO')}</span>
-              </div>
-            </div>
-
-            {/* Wompi Checkout Button */}
-            <button className="w-full relative group overflow-hidden rounded-full p-[2px]">
-              <span className="absolute inset-0 bg-gradient-to-r from-[#0047FF] via-[#000000] to-[#0047FF] rounded-full animate-wompi-gradient bg-[length:200%_auto]" />
-              <div className="relative bg-black w-full h-full rounded-full flex items-center justify-center gap-3 px-8 py-4 transition-all duration-300 group-hover:bg-opacity-90">
-                <span className="font-bold uppercase tracking-[0.2em] text-white">Pagar con</span>
-                {/* Wompi Logo (Text representation for now, or SVG if available) */}
-                <span className="font-black text-xl text-white tracking-widest italic" style={{ textShadow: "0 0 10px rgba(0,71,255,0.5)"}}>
-                  Wompi.
-                </span>
-                <svg className="w-4 h-4 text-white ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </div>
-            </button>
-            <p className="text-center text-[10px] mt-4 opacity-50 uppercase tracking-widest flex items-center justify-center gap-2">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              Pagos seguros procesados por Bancolombia
-            </p>
+            <div className="machine-hole"></div>
           </div>
-        )}
-      </div>
 
-      <style jsx global>{`
-        @keyframes wompiGradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-wompi-gradient {
-          animation: wompiGradient 3s linear infinite;
-        }
-      `}</style>
+                    <div className={`receipt-clip ${(isEntering || isRetracting) ? 'clip-slot-active' : ''}`}>
+            <div id="receipt" className={`paper-bg sawtooth ${animClass}`}>
+              
+              <div className="receipt-logo">
+                <span>------</span>
+                <div className="logo-image">
+                  <Image 
+                      src="/logo.png" 
+                      alt="Traum" 
+                      fill
+                      style={{ objectFit: 'contain', filter: 'grayscale(100%) brightness(0.2) contrast(1.2)' }} 
+                  />
+                </div>
+              </div>
+
+              <div className="dash-line"></div>
+
+              {cartItems.length === 0 ? (
+                <div style={{ textAlign: "center", fontSize: "14px", margin: "20px 0" }}>
+                  <p>El carrito está vacío</p>
+                  <button onClick={handleClose} style={{ marginTop: '16px', padding: '10px 20px', backgroundColor: '#111', color: 'white', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', borderRadius: '4px', cursor: 'pointer' }}>
+                    Volver a la tienda
+                  </button>
+                </div>
+              ) : (
+                cartItems.map(item => (
+                  <div key={item.id}>
+                    <div className="receipt-product">
+                      <div className="rp-row">
+                        <span className="rp-title">{item.name}</span>
+                        <span className="rp-price">${item.price.toLocaleString("es-CO")}</span>
+                      </div>
+                      <p className="rp-meta">CANT. {item.quantity}</p>
+                      {item.size && <p className="rp-size">Talla: {item.size}</p>}
+                      <div className="rp-qty-row">
+                        <span className="rp-qty">{item.quantity}x</span>
+                        <span className="rp-total">${(item.price * item.quantity).toLocaleString("es-CO")}</span>
+                        <div className="rp-controls">
+                          <button onClick={() => updateQuantity(item.id, item.size || "", Math.max(1, item.quantity - 1))} className="rp-btn">-</button>
+                          <button onClick={() => updateQuantity(item.id, item.size || "", item.quantity + 1)} className="rp-btn">+</button>
+                          <button onClick={() => removeFromCart(item.id, item.size || "")} className="rp-remove">Quitar</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="dash-line"></div>
+                  </div>
+                ))
+              )}
+
+              <div className="r-totals-wrap">
+                <div className="r-sub-row">
+                  <span>Subtotal</span>
+                  <span className="r-sub-val">${cartTotal.toLocaleString("es-CO")}</span>
+                </div>
+                <div className="r-sub-row">
+                  <span>Envío</span>
+                  <span>Calculado en el checkout</span>
+                </div>
+              </div>
+
+              <div className="r-grand-total">
+                <span className="r-gt-label">Total (COP)</span>
+                <span className="r-gt-val">$ {cartTotal.toLocaleString("es-CO")}</span>
+              </div>
+
+              <button id="btn-buy" onClick={handleBuy} disabled={cartItems.length === 0} className="r-btn-buy">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                Pagar y Finalizar
+              </button>
+
+              <div className="r-barcode-wrap">
+                <div className="r-barcode-bars">
+                  <div className="b-w2"></div><div className="b-w1"></div>
+                  <div className="b-w3"></div><div className="b-w1"></div>
+                  <div className="b-w2"></div><div className="b-w1"></div>
+                  <div className="b-w4"></div><div className="b-w1"></div>
+                  <div className="b-w2"></div><div className="b-w2"></div>
+                  <div className="b-w1"></div><div className="b-w3"></div>
+                  <div className="b-w1"></div><div className="b-w2"></div>
+                  <div className="b-w1"></div><div className="b-w3"></div>
+                  <div className="b-w2"></div><div className="b-w1"></div>
+                  <div className="b-w1"></div><div className="b-w4"></div>
+                  <div className="b-w2"></div><div className="b-w1"></div>
+                  <div className="b-w3"></div><div className="b-w1"></div>
+                  <div className="b-w1"></div><div className="b-w2"></div>
+                  <div className="b-w3"></div><div className="b-w1"></div>
+                  <div className="b-w2"></div><div className="b-w2"></div>
+                  <div className="b-w1"></div><div className="b-w4"></div>
+                  <div className="b-w1"></div><div className="b-w2"></div>
+                  <div className="b-w1"></div>
+                </div>
+                <div className="r-barcode-text">#A3019P34865</div>
+              </div>
+
+              <div className="dash-line"></div>
+
+              <div className="r-footer">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L14.5 9.5L23 12L14.5 14.5L12 23L9.5 14.5L1 12L9.5 9.5L12 1Z"/>
+                </svg>
+                PAGOS SEGUROS PROCESADOS POR BANCOLOMBIA
+              </div>
+            </div>
+          </div>
+
+          <div className="machine-slot-bottom"></div>
+        </div>
+      </div>
     </>
   )
 }

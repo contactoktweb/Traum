@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useCart } from "./CartProvider"
+import { useCart } from "@/components/CartProvider"
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
