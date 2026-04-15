@@ -43,19 +43,73 @@ export default function CheckoutPage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  // Form state
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [department, setDepartment] = useState("")
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setErrorMsg(null)
 
-    setTimeout(() => {
-      clearCart()
-      router.push("/gracias")
-    }, 1400)
+    try {
+      const res = await fetch("/api/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cartItems.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size,
+            image: item.image,
+          })),
+          payer: {
+            name: firstName,
+            surname: lastName,
+            email,
+          },
+        }),
+      })
+
+      const text = await res.text()
+      let data: { checkoutUrl?: string; error?: string; detail?: string }
+
+      try {
+        data = JSON.parse(text)
+      } catch {
+        console.error("Respuesta no-JSON de la API:", text)
+        setErrorMsg("Error inesperado del servidor. Intenta nuevamente.")
+        setIsSubmitting(false)
+        return
+      }
+
+      if (!res.ok || !data.checkoutUrl) {
+        console.error("Error MP:", data)
+        setErrorMsg(data.error || "No se pudo iniciar el pago. Intenta nuevamente.")
+        setIsSubmitting(false)
+        return
+      }
+
+      // Redirigir PRIMERO, limpiar carrito al volver (en página /gracias)
+      window.location.replace(data.checkoutUrl)
+    } catch (err) {
+      console.error("Error en handleSubmit:", err)
+      setErrorMsg("Ocurrió un error de conexión. Intenta nuevamente.")
+      setIsSubmitting(false)
+    }
   }
 
   if (!mounted) return null
@@ -69,7 +123,7 @@ export default function CheckoutPage() {
             <p className="mb-3 rounded-full border border-black/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#354523]/70">
               Checkout
             </p>
-            <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-[#354523]">Tu carrito esta vacio</h1>
+            <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-[#354523]">Tu carrito está vacío</h1>
             <p className="mb-8 max-w-md text-sm text-[#354523]/70">
               No encontramos productos para finalizar el pago. Regresa a la tienda y selecciona las prendas que deseas comprar.
             </p>
@@ -99,7 +153,7 @@ export default function CheckoutPage() {
               </p>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight text-[#354523]">Finalizar Pedido</h1>
               <p className="mt-3 max-w-2xl text-sm md:text-base text-[#354523]/75">
-                Completa tus datos y confirma tu compra. Proceso rapido, claro y protegido.
+                Completa tus datos y confirma tu compra. Serás redirigido a MercadoPago para pagar con total seguridad.
               </p>
             </div>
 
@@ -111,87 +165,247 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* Error message */}
+          {errorMsg && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-700">
+              ⚠️ {errorMsg}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.35fr_0.9fr]">
             <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+              {/* Sección 1: Contacto */}
               <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
                 <h2 className="mb-6 flex items-center gap-3 border-b border-black/10 pb-4 text-xl font-bold text-[#354523]">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#354523] text-xs font-semibold text-[#EBD69F]">
                     1
                   </span>
-                  Informacion de Contacto
+                  Información de Contacto
                 </h2>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Nombre</label>
-                    <input required name="firstName" type="text" className={inputClassName} placeholder="Juan" />
+                    <label htmlFor="firstName" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Nombre</label>
+                    <input
+                      id="firstName"
+                      required
+                      name="firstName"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className={inputClassName}
+                      placeholder="Juan"
+                    />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Apellidos</label>
-                    <input required name="lastName" type="text" className={inputClassName} placeholder="Perez" />
+                    <label htmlFor="lastName" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Apellidos</label>
+                    <input
+                      id="lastName"
+                      required
+                      name="lastName"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className={inputClassName}
+                      placeholder="Pérez"
+                    />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Correo Electronico</label>
-                    <input required name="email" type="email" className={inputClassName} placeholder="juan@email.com" />
+                    <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Correo Electrónico</label>
+                    <input
+                      id="email"
+                      required
+                      name="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={inputClassName}
+                      placeholder="juan@email.com"
+                    />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Telefono Movil</label>
-                    <input required name="phone" type="tel" className={inputClassName} placeholder="+57 300 000 0000" />
+                    <label htmlFor="phone" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Teléfono Móvil</label>
+                    <input
+                      id="phone"
+                      required
+                      name="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className={inputClassName}
+                      placeholder="+52 55 0000 0000"
+                    />
                   </div>
                 </div>
               </section>
 
+              {/* Sección 2: Dirección */}
               <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
                 <h2 className="mb-6 flex items-center gap-3 border-b border-black/10 pb-4 text-xl font-bold text-[#354523]">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#354523] text-xs font-semibold text-[#EBD69F]">
                     2
                   </span>
-                  Direccion de Envio
+                  Dirección de Envío
                 </h2>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  {/* Calle */}
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Direccion</label>
-                    <input required name="address" type="text" className={inputClassName} placeholder="Calle 123 #45-67, Apto 101" />
+                    <label htmlFor="address" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Calle</label>
+                    <input
+                      id="address"
+                      required
+                      name="address"
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      className={inputClassName}
+                      placeholder="Av. Insurgentes Sur"
+                    />
                   </div>
 
+                  {/* Número exterior */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Ciudad</label>
-                    <input required name="city" type="text" className={inputClassName} placeholder="Bogota" />
+                    <label htmlFor="numExt" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Número Exterior</label>
+                    <input
+                      id="numExt"
+                      required
+                      name="numExt"
+                      type="text"
+                      className={inputClassName}
+                      placeholder="123"
+                    />
                   </div>
 
+                  {/* Número interior */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Departamento</label>
-                    <input required name="department" type="text" className={inputClassName} placeholder="Cundinamarca" />
+                    <label htmlFor="numInt" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">
+                      Número Interior <span className="normal-case font-normal opacity-60">(opcional)</span>
+                    </label>
+                    <input
+                      id="numInt"
+                      name="numInt"
+                      type="text"
+                      className={inputClassName}
+                      placeholder="Depto. 4B"
+                    />
+                  </div>
+
+                  {/* Colonia */}
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label htmlFor="colonia" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Colonia</label>
+                    <input
+                      id="colonia"
+                      required
+                      name="colonia"
+                      type="text"
+                      className={inputClassName}
+                      placeholder="Del Valle"
+                    />
+                  </div>
+
+                  {/* Ciudad */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="city" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Ciudad</label>
+                    <input
+                      id="city"
+                      required
+                      name="city"
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className={inputClassName}
+                      placeholder="Ciudad de México"
+                    />
+                  </div>
+
+                  {/* Código Postal */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="postalCode" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Código Postal</label>
+                    <input
+                      id="postalCode"
+                      required
+                      name="postalCode"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={5}
+                      className={inputClassName}
+                      placeholder="03100"
+                    />
+                  </div>
+
+                  {/* Estado */}
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label htmlFor="department" className="text-xs font-semibold uppercase tracking-[0.15em] text-[#354523]/70">Estado</label>
+                    <input
+                      id="department"
+                      required
+                      name="department"
+                      type="text"
+                      value={department}
+                      onChange={(e) => setDepartment(e.target.value)}
+                      className={inputClassName}
+                      placeholder="Ciudad de México"
+                    />
                   </div>
                 </div>
               </section>
 
+              {/* Sección 3: Método de pago */}
               <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
                 <h2 className="mb-6 flex items-center gap-3 border-b border-black/10 pb-4 text-xl font-bold text-[#354523]">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#354523] text-xs font-semibold text-[#EBD69F]">
                     3
                   </span>
-                  Metodo de Pago
+                  Método de Pago
                 </h2>
 
-                <div className="rounded-2xl border-2 border-[#354523] bg-[#EBD69F]/15 p-4 sm:p-5">
+                {/* MercadoPago card */}
+                <div className="rounded-2xl border-2 border-[#009EE3] bg-[#009EE3]/8 p-4 sm:p-5">
                   <div className="flex items-center gap-4">
-                    <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#354523]">
-                      <div className="h-2.5 w-2.5 rounded-full bg-[#EBD69F]"></div>
+                    {/* Ícono de MP */}
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#009EE3]">
+                      <svg viewBox="0 0 48 48" className="h-7 w-7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="24" fill="#009EE3"/>
+                        <path d="M9.5 24C9.5 16.268 15.768 10 23.5 10s14 6.268 14 14-6.268 14-14 14-14-6.268-14-14z" fill="white"/>
+                        <path d="M19.5 21l4 4 8-8" stroke="#009EE3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </div>
                     <div>
-                      <h3 className="text-[15px] font-bold text-[#354523]">PayPal (Modo Prueba)</h3>
-                      <p className="mt-1 text-xs text-[#354523]/70">Simulacion de pago para pruebas, no se realiza ningun cobro real.</p>
+                      <h3 className="text-[15px] font-bold text-[#354523]">MercadoPago</h3>
+                      <p className="mt-0.5 text-xs text-[#354523]/70">
+                        Paga con tarjeta, PSE, efectivo o wallet. Tu pago está 100 % protegido.
+                      </p>
                     </div>
                   </div>
+
+                  {/* Métodos aceptados */}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {["Visa", "Mastercard", "PSE", "Efecty", "Nequi"].map((method) => (
+                      <span
+                        key={method}
+                        className="rounded-lg border border-[#009EE3]/30 bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#354523]/70"
+                      >
+                        {method}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
+                <p className="mt-4 flex items-center gap-2 text-[11px] text-[#354523]/55 font-medium">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0110 0v4"></path>
+                  </svg>
+                  Al continuar serás redirigido de forma segura a MercadoPago para completar tu pago.
+                </p>
               </section>
             </form>
 
+            {/* Sidebar – Resumen de compra */}
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
                 <h2 className="mb-6 border-b border-black/10 pb-4 text-xl font-bold text-[#354523]">Resumen de Compra</h2>
@@ -217,7 +431,7 @@ export default function CheckoutPage() {
                       <div className="min-w-0 flex-1">
                         <h4 className="truncate text-sm font-bold text-[#354523]">{item.name}</h4>
                         <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#354523]/60">
-                          Talla: {item.size || "Unica"}
+                          Talla: {item.size || "Única"}
                         </p>
                       </div>
 
@@ -234,7 +448,7 @@ export default function CheckoutPage() {
                     <span className="font-semibold text-[#354523]">${cartTotal.toLocaleString("es-CO")}</span>
                   </div>
                   <div className="flex justify-between text-sm text-[#354523]/70">
-                    <span>Envio</span>
+                    <span>Envío</span>
                     <span className="font-semibold text-[#557A2B]">Gratis</span>
                   </div>
                   <div className="mt-2 flex justify-between border-t border-black/10 pt-4 text-xl font-black text-[#354523]">
@@ -249,7 +463,7 @@ export default function CheckoutPage() {
                   className={`mt-8 h-14 w-full rounded-2xl text-sm font-extrabold uppercase tracking-[0.2em] transition-all ${
                     isSubmitting
                       ? "cursor-not-allowed bg-black/35 text-white"
-                      : "bg-[#354523] text-[#EBD69F] hover:opacity-90"
+                      : "bg-[#009EE3] text-white hover:bg-[#0081BD]"
                   }`}
                   disabled={isSubmitting}
                 >
@@ -262,7 +476,12 @@ export default function CheckoutPage() {
                       Procesando...
                     </span>
                   ) : (
-                    "Finalizar Pedido"
+                    <span className="flex items-center justify-center gap-2">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+                        <path d="M4 4h16v2H4V4zm0 4h16v2H4V8zm0 4h10v2H4v-2z"/>
+                      </svg>
+                      Pagar con MercadoPago
+                    </span>
                   )}
                 </button>
 
@@ -271,7 +490,7 @@ export default function CheckoutPage() {
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0110 0v4"></path>
                   </svg>
-                  Seguridad Garantizada 
+                  Seguridad Garantizada
                 </p>
               </div>
             </aside>

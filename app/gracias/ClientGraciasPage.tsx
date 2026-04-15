@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Header } from "@/components/Header"
 import { SocialLinks } from "@/components/SocialLinks"
 
@@ -12,10 +13,44 @@ const colors = {
   sand: "#D5B87E",
 }
 
+/** Mapeo de status de MercadoPago a contenido UI */
+const PAYMENT_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  approved: {
+    label: "✅ ¡Pago aprobado! Tu pedido está en camino.",
+    color: "#2d6a4f",
+    bg: "#d8f3dc",
+  },
+  pending: {
+    label: "⏳ Pago pendiente. Te avisaremos cuando se confirme.",
+    color: "#7b4f12",
+    bg: "#fef9c3",
+  },
+  failure: {
+    label: "❌ El pago no se completó. Puedes intentarlo de nuevo.",
+    color: "#7f1d1d",
+    bg: "#fee2e2",
+  },
+}
+
 export default function ClientGraciasPage({ data, globalConfig }: { data?: any; globalConfig?: any }) {
+  const searchParams = useSearchParams()
+  const paymentStatus = searchParams.get("status") || "approved"
+  const statusConfig = PAYMENT_STATUS_CONFIG[paymentStatus] ?? PAYMENT_STATUS_CONFIG["approved"]
+
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [currentYear, setCurrentYear] = useState("")
   const [isLoaded, setIsLoaded] = useState(false)
+
+  // Limpiamos el carrito aquí, después de que MercadoPago redirige de vuelta
+  useEffect(() => {
+    if (paymentStatus === "approved") {
+      try {
+        localStorage.removeItem("traum-cart")
+      } catch {
+        // no critical
+      }
+    }
+  }, [paymentStatus])
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear().toString())
@@ -148,7 +183,7 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-12 flex flex-col items-center text-center pb-8 md:pb-16 ">
           {/* Eyebrow */}
           <div
-            className="flex w-full items-center justify-center  mb-4 md:mb-10"
+            className="flex w-full items-center justify-center flex-col gap-3 mb-4 md:mb-10"
             style={{
               opacity: isLoaded ? 1 : 0,
               transform: isLoaded ? "translateY(0)" : "translateY(20px)",
@@ -157,6 +192,22 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
           >
             <div className="tape-banner">
               FASE COMPLETADA
+            </div>
+            {/* Banner de estado de pago MercadoPago */}
+            <div
+              style={{
+                background: statusConfig.bg,
+                color: statusConfig.color,
+                borderRadius: "1rem",
+                padding: "10px 24px",
+                fontFamily: "'Chewy', cursive",
+                fontSize: "1rem",
+                letterSpacing: "2px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                border: `1.5px solid ${statusConfig.color}30`,
+              }}
+            >
+              {statusConfig.label}
             </div>
           </div>
 
