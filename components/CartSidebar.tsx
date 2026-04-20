@@ -122,13 +122,13 @@ export function CartSidebar() {
                     <div className="receipt-product">
                       <div className="rp-row">
                         <span className="rp-title">{item.name}</span>
-                        <span className="rp-price">${item.price.toLocaleString("es-CO")}</span>
+                        <span className="rp-price">${item.price.toLocaleString("es-MX")}</span>
                       </div>
                       <p className="rp-meta">CANT. {item.quantity}</p>
                       {item.size && <p className="rp-size">Talla: {item.size}</p>}
                       <div className="rp-qty-row">
                         <span className="rp-qty">{item.quantity}x</span>
-                        <span className="rp-total">${(item.price * item.quantity).toLocaleString("es-CO")}</span>
+                        <span className="rp-total">${(item.price * item.quantity).toLocaleString("es-MX")}</span>
                         <div className="rp-controls">
                           <button onClick={() => updateQuantity(item.id, item.size || "", Math.max(1, item.quantity - 1))} className="rp-btn">-</button>
                           <button onClick={() => updateQuantity(item.id, item.size || "", item.quantity + 1)} className="rp-btn">+</button>
@@ -144,7 +144,7 @@ export function CartSidebar() {
               <div className="r-totals-wrap">
                 <div className="r-sub-row">
                   <span>Subtotal</span>
-                  <span className="r-sub-val">${cartTotal.toLocaleString("es-CO")}</span>
+                  <span className="r-sub-val">${cartTotal.toLocaleString("es-MX")}</span>
                 </div>
                 <div className="r-sub-row">
                   <span>Envío</span>
@@ -153,8 +153,8 @@ export function CartSidebar() {
               </div>
 
               <div className="r-grand-total">
-                <span className="r-gt-label">Total (COP)</span>
-                <span className="r-gt-val">$ {cartTotal.toLocaleString("es-CO")}</span>
+                <span className="r-gt-label">Total (MXN)</span>
+                <span className="r-gt-val">$ {cartTotal.toLocaleString("es-MX")}</span>
               </div>
 
               <button id="btn-buy" onClick={handleBuy} disabled={cartItems.length === 0} className="r-btn-buy">

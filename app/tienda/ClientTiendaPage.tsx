@@ -293,7 +293,7 @@ export default function ClientTiendaPage({ waitData, products: initialProducts, 
                 </h3>
                 
                 <div className="text-2xl font-light mb-8" style={{ color: colors.leaf }}>
-                  $ {product.price.toLocaleString('es-CO')} COP
+                  $ {product.price.toLocaleString('es-MX')} MXN
                 </div>
                 
                 <p className="text-lg leading-relaxed mb-8 opacity-80" style={{ color: colors.dark }}>

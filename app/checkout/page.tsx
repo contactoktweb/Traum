@@ -49,7 +49,7 @@ export default function CheckoutPage() {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
+  const [phone, setPhone] = useState("+52 ")
   const [address, setAddress] = useState("")
   const [city, setCity] = useState("")
   const [department, setDepartment] = useState("")
@@ -234,7 +234,15 @@ export default function CheckoutPage() {
                       name="phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        if (!val.startsWith("+52 ")) {
+                          if (val.length < 4) val = "+52 ";
+                          else if (val.startsWith("+52")) val = "+52 " + val.slice(3).trimStart();
+                          else val = "+52 " + val.replace(/^\+?52?\s*/, "");
+                        }
+                        setPhone(val);
+                      }}
                       className={inputClassName}
                       placeholder="+52 55 0000 0000"
                     />
@@ -367,12 +375,13 @@ export default function CheckoutPage() {
                 <div className="rounded-2xl border-2 border-[#009EE3] bg-[#009EE3]/8 p-4 sm:p-5">
                   <div className="flex items-center gap-4">
                     {/* Ícono de MP */}
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#009EE3]">
-                      <svg viewBox="0 0 48 48" className="h-7 w-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="24" cy="24" r="24" fill="#009EE3"/>
-                        <path d="M9.5 24C9.5 16.268 15.768 10 23.5 10s14 6.268 14 14-6.268 14-14 14-14-6.268-14-14z" fill="white"/>
-                        <path d="M19.5 21l4 4 8-8" stroke="#009EE3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                    <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                      <Image
+                        src="/mercadopago.jpg"
+                        alt="MercadoPago"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                     <div>
                       <h3 className="text-[15px] font-bold text-[#354523]">MercadoPago</h3>
@@ -380,18 +389,6 @@ export default function CheckoutPage() {
                         Paga con tarjeta, PSE, efectivo o wallet. Tu pago está 100 % protegido.
                       </p>
                     </div>
-                  </div>
-
-                  {/* Métodos aceptados */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {["Visa", "Mastercard", "PSE", "Efecty", "Nequi"].map((method) => (
-                      <span
-                        key={method}
-                        className="rounded-lg border border-[#009EE3]/30 bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#354523]/70"
-                      >
-                        {method}
-                      </span>
-                    ))}
                   </div>
                 </div>
 
@@ -436,7 +433,7 @@ export default function CheckoutPage() {
                       </div>
 
                       <div className="text-sm font-bold text-[#354523]">
-                        ${(item.price * item.quantity).toLocaleString("es-CO")}
+                        ${(item.price * item.quantity).toLocaleString("es-MX")}
                       </div>
                     </div>
                   ))}
@@ -445,7 +442,7 @@ export default function CheckoutPage() {
                 <div className="space-y-3 border-t border-black/10 pt-4">
                   <div className="flex justify-between text-sm text-[#354523]/70">
                     <span>Subtotal</span>
-                    <span className="font-semibold text-[#354523]">${cartTotal.toLocaleString("es-CO")}</span>
+                    <span className="font-semibold text-[#354523]">${cartTotal.toLocaleString("es-MX")}</span>
                   </div>
                   <div className="flex justify-between text-sm text-[#354523]/70">
                     <span>Envío</span>
@@ -453,7 +450,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="mt-2 flex justify-between border-t border-black/10 pt-4 text-xl font-black text-[#354523]">
                     <span>Total</span>
-                    <span>${cartTotal.toLocaleString("es-CO")}</span>
+                    <span>${cartTotal.toLocaleString("es-MX")}</span>
                   </div>
                 </div>
 

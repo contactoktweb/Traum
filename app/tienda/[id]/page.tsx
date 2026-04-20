@@ -133,7 +133,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                
                {/* Price */}
                <p className="text-xl font-semibold mb-8 tracking-wide" style={{ color: colors.dark }}>
-                 $ {product.price.toLocaleString('es-CO')} <span className="text-sm font-normal opacity-50">COP</span>
+                 $ {product.price.toLocaleString('es-MX')} <span className="text-sm font-normal opacity-50">MXN</span>
                </p>
                
                {/* Description */}

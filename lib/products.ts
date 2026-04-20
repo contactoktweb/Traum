@@ -3,7 +3,7 @@ export const products = [
     id: "modelo-1",
     name: "Modelo 1: Dark Edition",
     description: "Nuestra primera pieza conceptual. Fusiona la profundidad del bosque oscuro con la sutileza de los detalles en arena. Diseñada para quienes entienden que el estilo es un manifiesto silencioso.",
-    price: 120000,
+    price: 3000,
     edition: "Edición Limitada 1/50",
     image: "/cap_model_1.png",
     // Adding placeholder gallery images for the individual product page
@@ -14,7 +14,7 @@ export const products = [
     id: "modelo-2",
     name: "Modelo 2: Sand Origin",
     description: "Un tributo a nuestras raíces. Colores crema y arena que evocan ligereza, contrastados con el parche oficial de la marca. Una silueta clásica reinterpretada.",
-    price: 120000,
+    price: 3000,
     edition: "Edición Limitada 1/50",
     image: "/cap_model_2.png",
     // Adding placeholder gallery images for the individual product page
