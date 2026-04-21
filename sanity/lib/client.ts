@@ -6,5 +6,10 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false, // false to prevent CDN caching
+  stega: {
+    studioUrl: '/admin',
+  },
+  // Disable Next.js fetch cache completely
+  fetch: { cache: 'no-store' }
 })

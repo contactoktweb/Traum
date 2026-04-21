@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import Script from 'next/script'
 import './globals.css'
 import { client } from '@/sanity/lib/client'
 
@@ -98,6 +99,10 @@ export default function RootLayout({
           <CartSidebar />
         </CartProvider>
         <Analytics />
+        <Script
+          src="https://sdk.mercadopago.com/js/v2"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   )

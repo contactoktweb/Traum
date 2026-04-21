@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
 
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Header } from "@/components/Header"
 import { SocialLinks } from "@/components/SocialLinks"
 import { getOptimizedSanityImage } from "@/sanity/lib/image-optimized"
@@ -14,10 +15,49 @@ const colors = {
   sand: "#D5B87E",
 }
 
-export default function ClientGraciasPage({ data, globalConfig }: { data?: any; globalConfig?: any }) {
+/** Mapeo de status de MercadoPago a contenido UI */
+const PAYMENT_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  approved: {
+    label: "✅ ¡Pago aprobado! Tu pedido está en camino.",
+    color: "#2d6a4f",
+    bg: "#d8f3dc",
+  },
+  pending: {
+    label: "⏳ Pago pendiente. Te avisaremos cuando se confirme.",
+    color: "#7b4f12",
+    bg: "#fef9c3",
+  },
+  failure: {
+    label: "❌ El pago no se completó. Puedes intentarlo de nuevo.",
+    color: "#7f1d1d",
+    bg: "#fee2e2",
+  },
+}
+
+export default function ClientCompraExitosaPage() {
+  const searchParams = useSearchParams()
+  const paymentStatus = searchParams.get("status") || "approved"
+  const statusConfig = PAYMENT_STATUS_CONFIG[paymentStatus] ?? PAYMENT_STATUS_CONFIG["approved"]
+
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [currentYear, setCurrentYear] = useState("")
   const [isLoaded, setIsLoaded] = useState(false)
+  const [orderItems, setOrderItems] = useState<any[]>([])
+
+  // Limpiamos el carrito aquí, después de que MercadoPago redirige de vuelta
+  useEffect(() => {
+    if (paymentStatus === "approved") {
+      try {
+        const savedCart = localStorage.getItem("traum_cart")
+        if (savedCart) {
+          setOrderItems(JSON.parse(savedCart))
+        }
+        localStorage.removeItem("traum_cart")
+      } catch {
+        // no critical
+      }
+    }
+  }, [paymentStatus])
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear().toString())
@@ -31,13 +71,9 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
     }
   }, [])
 
-  // Optimización de imágenes de fondo Sanity
-  const desktopBg = data?.desktopBackgroundImage && data?.desktopBackgroundImage.startsWith('http')
-    ? getOptimizedSanityImage(data.desktopBackgroundImage, { width: 1920, quality: 80 })
-    : '/fondo-acabado.png';
-  const mobileBg = data?.mobileBackgroundImage && data?.mobileBackgroundImage.startsWith('http')
-    ? getOptimizedSanityImage(data.mobileBackgroundImage, { width: 800, quality: 70 })
-    : '/fondo-acabado-mobile.png';
+  // Imágenes de fondo estáticas (expandir en el futuro con datos de Sanity si se requiere)
+  const desktopBg = '/fondo-acabado.png';
+  const mobileBg = '/fondo-acabado-mobile.png';
 
   return (
     <main className="relative h-[100dvh] w-screen overflow-hidden bg-[#FAF6EE]">
@@ -70,6 +106,11 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
                 8px 8px 0px #995c00,
                 12px 12px 15px rgba(0,0,0,0.3);
             display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .gracias-letter:hover {
+            transform: scale(1.1) rotate(4deg) !important;
         }
 
         .gracias-text {
@@ -158,7 +199,23 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
             }}
           >
             <div className="tape-banner">
-              FASE COMPLETADA
+              COMPRA EXITOSA
+            </div>
+            {/* Banner de estado de pago MercadoPago */}
+            <div
+              style={{
+                background: statusConfig.bg,
+                color: statusConfig.color,
+                borderRadius: "1rem",
+                padding: "10px 24px",
+                fontFamily: "'Chewy', cursive",
+                fontSize: "1rem",
+                letterSpacing: "2px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                border: `1.5px solid ${statusConfig.color}30`,
+              }}
+            >
+              {statusConfig.label}
             </div>
           </div>
 
@@ -166,7 +223,7 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
           <div className="flex flex-col items-center gap-y-0 md:gap-y-4 w-full">
             {/* Main title */}
             <h1 className="overflow-visible shrink-0 flex justify-center w-full flex-wrap gap-x-2 md:gap-x-4 py-0 md:py-4">
-              {(data?.title || "GRACIAS").split("").map((char: string, i: number) => (
+              {("GRACIAS").split("").map((char: string, i: number) => (
                 <span
                   key={i}
                   className="gracias-letter drop-shadow-xl"
@@ -182,7 +239,7 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
 
             {/* Subtitle */}
             <div 
-              className="gracias-text text-lg md:text-2xl lg:text-3xl font-normal mt-2 md:mt-6 max-w-2xl text-center"
+              className="gracias-text text-lg md:text-2xl lg:text-3xl font-normal mt-2 md:mt-4 max-w-2xl text-center"
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: isLoaded ? "translateY(0)" : "translateY(20px)",
@@ -190,18 +247,9 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
                 color: "#37412a"
               }}
             >
-              {data?.message ? (
-                // This preserves HTML formatting if edited through Sanity or custom strings
-                <div dangerouslySetInnerHTML={{ __html: data.message }} />
-              ) : (
-                <>
-                  Gracias por ser parte de esta nueva fase. 
-                  <br className="hidden md:block" />
-                  <span className="font-medium text-base md:text-xl opacity-80 mt-2 block">
-                    Próximamente revelaremos el siguiente capítulo.
-                  </span>
-                </>
-              )}
+              <span className="font-medium text-base md:text-xl opacity-80 mt-2 block">
+                Toda la información de tu pedido llegará a tu correo electrónico.
+              </span>
             </div>
           </div>
         </div>
@@ -214,7 +262,7 @@ export default function ClientGraciasPage({ data, globalConfig }: { data?: any; 
             © {currentYear || new Date().getFullYear()} TRAUM STUDIO. ALL RIGHTS RESERVED.
           </div>
           
-          <SocialLinks config={globalConfig} iconColor={colors.dark} />
+          <SocialLinks config={{}} iconColor={colors.dark} />
 
           <a
             href="https://www.kytcode.lat"

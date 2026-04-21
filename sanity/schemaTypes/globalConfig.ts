@@ -68,6 +68,13 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: 'logo',
+      title: 'Logo Principal',
+      type: 'image',
+      description: 'Logo de la marca (se usa en los correos y encabezados)',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'ogImage',
       title: 'Imagen para Redes Sociales (Open Graph)',
       type: 'image',

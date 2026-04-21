@@ -64,9 +64,9 @@ export async function POST(req: NextRequest) {
           }
         : {}),
       back_urls: {
-        success: `${siteUrl}/gracias?status=approved`,
-        failure: `${siteUrl}/gracias?status=failure`,
-        pending: `${siteUrl}/gracias?status=pending`,
+        success: `${siteUrl}/compra-exitosa?status=approved`,
+        failure: `${siteUrl}/compra-exitosa?status=failure`,
+        pending: `${siteUrl}/compra-exitosa?status=pending`,
       },
       payment_methods: {
         // No excluir ningún tipo de pago — habilita tarjetas, transferencias, etc.
@@ -75,11 +75,7 @@ export async function POST(req: NextRequest) {
         installments: 12,
         default_installments: 1,
       },
-      // ─── PRODUCCIÓN ────────────────────────────────────────────────────────
-      // Descomenta la línea siguiente cuando subas a un dominio HTTPS real.
-      // También actualiza NEXT_PUBLIC_SITE_URL en las variables de entorno.
-      // auto_return: "approved",
-      // ───────────────────────────────────────────────────────────────────────
+      auto_return: "approved",
       statement_descriptor: "TRAUM STUDIO",
       binary_mode: false,
     }
