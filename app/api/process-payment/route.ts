@@ -119,9 +119,10 @@ export async function POST(req: NextRequest) {
       const customerEmail = orderData?.customer?.email || formData.payer?.email
 
       if (resendKey && customerEmail) {
-        // Obtenemos el logo de Sanity
-        const globalConfig = await sanityWriteClient.fetch(`*[_type == "globalConfig"][0]{ "logoUrl": logo.asset->url }`)
+        // Obtenemos el logo y el correo del administrador configurado en Sanity
+        const globalConfig = await sanityWriteClient.fetch(`*[_type == "globalConfig"][0]{ "logoUrl": logo.asset->url, adminEmail }`)
         const logoUrl = globalConfig?.logoUrl || "https://traumdrop.com/logo.png"
+        const adminDestEmail = globalConfig?.adminEmail || "mangolo.espadas@gmail.com"
 
         const itemsHtml = (orderData?.items || [])
           .map(
@@ -261,7 +262,7 @@ export async function POST(req: NextRequest) {
           },
           body: JSON.stringify({
             from: "Traum Ventas <pedidos@traumdrop.com>",
-            to: ["mangolo.espadas@gmail.com"],
+            to: [adminDestEmail],
             subject: `💰 Nuevo Pago Aprobado: Pedido ${orderNumber}`,
             html: adminHtml
           })

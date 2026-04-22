@@ -23,8 +23,15 @@ export default defineType({
     }),
     defineField({
       name: 'contactEmail',
-      title: 'Correo de Contacto',
+      title: 'Correo de Contacto Público',
       type: 'string',
+    }),
+    defineField({
+      name: 'adminEmail',
+      title: 'Correo de Notificaciones (Administrador)',
+      type: 'string',
+      description: 'A este correo llegarán las notificaciones de nuevas ventas. (Ej. mangolo.espadas@gmail.com)',
+      initialValue: 'mangolo.espadas@gmail.com',
     }),
     defineField({
       name: 'contactPhone',
