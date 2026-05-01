@@ -207,13 +207,13 @@ export default function ClientTiendaPage({ waitData, products: initialProducts, 
       <section className="relative pt-40 pb-20 px-6 z-10">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-sm font-bold tracking-[0.4em] uppercase mb-4" style={{ color: colors.moss }}>
-            Drop 01
+            {waitData?.storeSubtitle || "Drop 01"}
           </h1>
           <h2 className="text-6xl md:text-8xl font-black tracking-tighter" style={{ color: colors.dark }}>
-            THE ORIGIN
+            {waitData?.storeTitle || "THE ORIGIN"}
           </h2>
           <p className="mt-6 text-lg max-w-xl mx-auto opacity-70" style={{ color: colors.dark }}>
-            Nuestra primera colección conceptual. Piezas limitadas, creadas con precisión y narrativa. Una vez agotadas, no volverán.
+            {waitData?.storeDescription || "Nuestra primera colección conceptual. Piezas limitadas, creadas con precisión y narrativa. Una vez agotadas, no volverán."}
           </p>
         </div>
       </section>

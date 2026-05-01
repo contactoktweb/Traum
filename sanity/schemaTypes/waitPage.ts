@@ -46,6 +46,24 @@ export default defineType({
       initialValue: 'LANZAMIENTO 7:00 PM (CET)',
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'storeSubtitle',
+      title: 'Subtítulo de la Tienda (Ej: Drop 01)',
+      type: 'string',
+      initialValue: 'Drop 01',
+    }),
+    defineField({
+      name: 'storeTitle',
+      title: 'Título de la Tienda (Ej: THE ORIGIN)',
+      type: 'string',
+      initialValue: 'THE ORIGIN',
+    }),
+    defineField({
+      name: 'storeDescription',
+      title: 'Descripción de la Tienda',
+      type: 'text',
+      initialValue: 'Nuestra primera colección conceptual. Piezas limitadas, creadas con precisión y narrativa. Una vez agotadas, no volverán.',
+    }),
   ],
   preview: {
     select: {

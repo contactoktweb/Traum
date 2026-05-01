@@ -39,6 +39,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const product = await client.fetch(PRODUCT_BY_ID_QUERY, { id })

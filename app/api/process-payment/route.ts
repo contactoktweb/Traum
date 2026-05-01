@@ -270,8 +270,6 @@ export async function POST(req: NextRequest) {
 
         await Promise.all([emailToCustomer, emailToAdmin]).catch(err => console.error("Error enviando correos múltiples con Resend:", err));
       }
-      }
-
     } catch (sanityError) {
       // No fallar el pago si Sanity o el correo fallan — el pago ya fue procesado
       console.error("Error guardando pedido en Sanity o enviando correo:", sanityError)

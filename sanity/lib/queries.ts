@@ -15,6 +15,9 @@ export const WAIT_PAGE_QUERY = groq`*[_type == "waitPage"][0] {
   targetDate,
   releaseDateText,
   releaseTimeText,
+  storeSubtitle,
+  storeTitle,
+  storeDescription,
   "desktopBackgroundImage": desktopBackgroundImage.asset->url,
   "mobileBackgroundImage": mobileBackgroundImage.asset->url
 }`
