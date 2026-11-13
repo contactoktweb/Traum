@@ -9,6 +9,27 @@ import { useCallback, useEffect, useRef, useState } from "react"
 const inputClassName =
   "h-12 w-full rounded-xl border border-black/15 bg-white px-4 text-sm text-[#354523] outline-none transition focus:border-[#354523]"
 
+/** Traducción de los status_detail de rechazo de MercadoPago */
+const REJECTION_REASONS: Record<string, string> = {
+  cc_rejected_bad_filled_card_number: "el número de tarjeta es incorrecto",
+  cc_rejected_bad_filled_date: "la fecha de vencimiento es incorrecta",
+  cc_rejected_bad_filled_security_code: "el código de seguridad (CVV) es incorrecto",
+  cc_rejected_bad_filled_other: "algún dato de la tarjeta es incorrecto",
+  cc_rejected_insufficient_amount: "la tarjeta no tiene fondos suficientes",
+  cc_rejected_call_for_authorize: "debes autorizar el pago con tu banco",
+  cc_rejected_card_disabled: "la tarjeta no está activada; llama a tu banco",
+  cc_rejected_duplicated_payment: "ya hiciste un pago por este mismo monto",
+  cc_rejected_high_risk: "el pago fue rechazado por prevención de fraude",
+  cc_rejected_max_attempts: "alcanzaste el límite de intentos permitidos",
+  cc_rejected_blacklist: "no se pudo procesar el pago con esta tarjeta",
+  cc_rejected_invalid_installments: "la tarjeta no acepta esa cantidad de meses",
+  cc_rejected_card_error: "no se pudo procesar el pago con esta tarjeta",
+  cc_rejected_other_reason: "el banco rechazó el pago",
+  rejected_by_bank: "el banco rechazó el pago",
+  rejected_insufficient_data: "faltan datos obligatorios del pago",
+  rejected: "el pago fue rechazado",
+}
+
 /** Estados del flujo de checkout */
 type CheckoutStep = "form" | "payment" | "processing" | "success" | "error"
 
@@ -90,9 +111,16 @@ export default function CheckoutPage() {
       return
     }
 
+    const publicKey = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY
+    if (!publicKey) {
+      setErrorMsg("Error: falta la variable NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY en el despliegue.")
+      brickMountedRef.current = false
+      return
+    }
+
     try {
       const mp = new (window as any).MercadoPago(
-        process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY,
+        publicKey,
         { locale: "es-MX" }
       )
       const bricksBuilder = mp.bricks()
@@ -176,7 +204,13 @@ export default function CheckoutPage() {
 
               if (!res.ok) {
                 console.error("Error al procesar pago:", data)
-                setErrorMsg(data.error || "No se pudo procesar el pago.")
+                const parts = [
+                  data.error || "No se pudo procesar el pago.",
+                  data.detail ? `Motivo: ${data.detail}` : "",
+                  data.cause ? `(${data.cause})` : "",
+                  `[HTTP ${data.status ?? res.status}]`,
+                ].filter(Boolean)
+                setErrorMsg(parts.join(" "))
                 setStep("payment")
                 return
               }
@@ -188,8 +222,10 @@ export default function CheckoutPage() {
               } else if (data.status === "in_process" || data.status === "pending") {
                 router.push(`/compra-exitosa?status=pending&payment_id=${data.id}`)
               } else {
+                const detail = data.status_detail || data.status
+                const friendly = REJECTION_REASONS[detail]
                 setErrorMsg(
-                  `El pago fue rechazado (${data.status_detail || data.status}). Intenta con otro método de pago.`
+                  `El pago fue rechazado: ${friendly || "motivo no especificado"} (${detail}). Intenta con otro método de pago.`
                 )
                 setStep("payment")
               }
@@ -206,7 +242,7 @@ export default function CheckoutPage() {
               return
             }
             console.error("Brick Error:", error)
-            setErrorMsg("Error al cargar el formulario de pago. Recarga la página.")
+            setErrorMsg(`Error al cargar el formulario de pago: ${error?.message || error?.cause || "desconocido"}. Recarga la página.`)
           },
         },
       })
@@ -214,7 +250,7 @@ export default function CheckoutPage() {
       brickControllerRef.current = controller
     } catch (err) {
       console.error("Error creando brick:", err)
-      setErrorMsg("No se pudo inicializar el formulario de pago.")
+      setErrorMsg(`No se pudo inicializar el formulario de pago: ${(err as any)?.message || "error desconocido"}`)
       brickMountedRef.current = false
     }
   }, [

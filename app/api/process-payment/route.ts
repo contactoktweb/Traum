@@ -57,11 +57,20 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       console.error("MercadoPago Payment API Error:", JSON.stringify(data))
+      // MercadoPago devuelve { message, error, status, cause: [{ code, description }] }
+      const causes = Array.isArray(data?.cause)
+        ? data.cause
+            .map((c: any) => [c?.code, c?.description].filter(Boolean).join(": "))
+            .filter(Boolean)
+            .join(" | ")
+        : ""
       return NextResponse.json(
         {
           error: "Error al procesar el pago.",
-          detail: data.message || JSON.stringify(data),
-          status: data.status,
+          detail: data?.message || data?.error || JSON.stringify(data),
+          cause: causes,
+          mpError: data?.error || "",
+          status: data?.status ?? response.status,
         },
         { status: response.status }
       )
@@ -287,7 +296,11 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error interno en /api/process-payment:", error)
     return NextResponse.json(
-      { error: "Error interno del servidor." },
+      {
+        error: "Error interno del servidor.",
+        detail: error instanceof Error ? error.message : String(error),
+        status: 500,
+      },
       { status: 500 }
     )
   }
